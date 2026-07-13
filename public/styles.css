@@ -37,6 +37,9 @@ a { color: inherit; }
   background: var(--primary-dark);
   color: #fff;
   padding: 14px 24px;
+  padding-top: max(14px, env(safe-area-inset-top));
+  padding-left: max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
   display: flex;
   align-items: center;
   gap: 14px;
@@ -264,9 +267,135 @@ table.matrix td:not(.rowlabel) { width: 130px; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 860px) {
-  .editor-layout { grid-template-columns: 1fr; }
-  .sidebar { position: static; display: flex; overflow-x: auto; gap: 4px; }
-  .sidebar h5 { display: none; }
-  .nav-item { white-space: nowrap; }
+/* Selector de sección para móvil (oculto en escritorio) */
+.mobile-secnav { display: none; }
+
+/* ============================================================
+   RESPONSIVE · TABLET (≤ 900px)
+   ============================================================ */
+@media (max-width: 900px) {
+  .container { padding: 18px 16px 90px; }
+
+  /* En tablet/móvil, la sidebar de escritorio se oculta y se usa el
+     selector desplegable de sección (más cómodo con el pulgar). */
+  .editor-layout { grid-template-columns: 1fr; gap: 16px; }
+  .sidebar { display: none; }
+  .mobile-secnav {
+    display: block; position: sticky; top: 66px; z-index: 40;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 12px; margin-bottom: 14px; box-shadow: var(--shadow);
+  }
+  .mobile-secnav label {
+    display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+    color: var(--text-muted); font-weight: 700; margin-bottom: 5px;
+  }
+  .mobile-secnav select { font-size: 15px; font-weight: 600; padding: 11px 12px; }
+}
+
+/* ============================================================
+   RESPONSIVE · MÓVIL (≤ 640px)
+   ============================================================ */
+@media (max-width: 640px) {
+  :root { --radius: 14px; }
+  body { font-size: 15px; }
+  .container { padding: 14px 12px 96px; }
+
+  /* Topbar compacta */
+  .topbar { padding: 11px 14px; gap: 10px; }
+  .topbar .logo { width: 34px; height: 34px; font-size: 16px; }
+  .topbar h1 { font-size: 13.5px; }
+  .topbar .sub { font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw; }
+  .topbar .home-btn { padding: 9px 12px; font-size: 12.5px; }
+
+  /* Hero más contenido */
+  .hero { padding: 20px 18px; border-radius: var(--radius); }
+  .hero h2 { font-size: 18px; line-height: 1.25; }
+  .hero p { font-size: 13px; }
+  .hero .stats { gap: 18px; margin-top: 14px; }
+  .hero .stat b { font-size: 19px; }
+
+  /* Encabezado de sección con el botón a lo ancho */
+  .section-head { align-items: stretch; }
+  .section-head h3 { font-size: 15px; }
+  .section-head > .btn { width: 100%; justify-content: center; }
+
+  /* Tarjetas de registro en una sola columna */
+  .cards { grid-template-columns: 1fr; gap: 12px; }
+  .reg-card { padding: 16px; }
+  .reg-card:hover { transform: none; }
+  .reg-card .rc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .reg-card .rc-actions .btn:first-child { grid-column: 1 / -1; }
+
+  /* Toolbar del editor: apilado y legible */
+  .editor-toolbar { flex-direction: column; align-items: stretch; padding: 14px; gap: 10px; }
+  .editor-toolbar .title-block { min-width: 0; }
+  .editor-toolbar .title-block .name { font-size: 16px; }
+  .save-state { font-size: 11.5px; }
+  #estado-sel { width: 100% !important; padding: 11px 12px; font-size: 15px; }
+  #export-dd { width: 100%; }
+  #export-btn { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+  .dropdown-menu { left: 0; right: 0; min-width: 0; }
+  .dropdown-menu button { padding: 13px 12px; font-size: 14px; }
+
+  /* Filtros de área: scroll horizontal cómodo, sin envolver */
+  .filter-bar {
+    padding: 10px 12px; gap: 7px; flex-wrap: nowrap; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-bar .lbl { white-space: nowrap; }
+  .chip { white-space: nowrap; padding: 8px 13px; font-size: 12.5px; }
+
+  /* Título de sección */
+  .q-section-title { font-size: 16px; }
+
+  /* Tarjetas de pregunta: cómodas al tacto */
+  .q-card { padding: 15px 14px; border-radius: var(--radius); }
+  .q-head { flex-wrap: wrap; gap: 8px; }
+  .q-num { font-size: 12.5px; padding: 4px 10px; }
+  .q-label { font-size: 15px; }
+  .q-help { font-size: 13px; }
+  /* La etiqueta de área baja a su propia línea, alineada bajo la pregunta */
+  .area-tag { order: 3; width: 100%; justify-content: flex-start; margin-top: 2px; padding: 5px 11px; font-size: 11.5px; }
+
+  /* Inputs y opciones con área táctil grande (≥ 44px) */
+  input[type=text], input[type=number], textarea, select { padding: 12px 13px; font-size: 16px; }
+  textarea { min-height: 84px; }
+  .opt { padding: 13px 14px; font-size: 15px; }
+  .opt input { width: 20px; height: 20px; }
+  .yesno { gap: 12px; }
+  .yesno .opt { padding: 15px; font-size: 16px; }
+
+  /* Matrices: scroll horizontal con pista visual y primera columna fija */
+  .matrix-wrap { border-radius: var(--radius); -webkit-overflow-scrolling: touch; }
+  table.matrix { font-size: 14px; }
+  table.matrix th, table.matrix td { padding: 10px 10px; }
+  table.matrix td.rowlabel {
+    position: sticky; left: 0; z-index: 2; min-width: 150px; max-width: 190px;
+    box-shadow: 2px 0 4px rgba(15,23,42,.06);
+  }
+  table.matrix thead th { font-size: 12px; }
+  table.matrix input { padding: 9px 8px; font-size: 15px; min-width: 78px; }
+  table.matrix td:not(.rowlabel) { width: 108px; }
+
+  /* Footer de navegación: dos botones iguales, texto corto */
+  .editor-footer { gap: 8px; }
+  .editor-footer .btn { flex: 1; justify-content: center; padding: 13px 8px; font-size: 14px; }
+
+  /* Modal a pantalla casi completa */
+  .modal-backdrop { padding: 12px; align-items: flex-end; }
+  .modal { max-width: 100%; border-radius: 18px 18px var(--radius) var(--radius); padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); }
+  .modal-actions { flex-direction: column-reverse; }
+  .modal-actions .btn { width: 100%; justify-content: center; padding: 13px; font-size: 15px; }
+
+  /* Toast por encima de la barra de navegación del navegador */
+  .toast { bottom: calc(18px + env(safe-area-inset-bottom)); left: 12px; right: 12px; transform: translateY(120px); text-align: center; }
+  .toast.show { transform: translateY(0); }
+}
+
+/* Pantallas muy estrechas (≤ 380px) */
+@media (max-width: 380px) {
+  .topbar .sub { display: none; }
+  .hero h2 { font-size: 17px; }
+  table.matrix td.rowlabel { min-width: 130px; }
 }

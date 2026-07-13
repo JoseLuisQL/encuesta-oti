@@ -319,6 +319,16 @@ function viewEditor() {
         </div>
       </div>
 
+      <div class="mobile-secnav">
+        <label>Sección</label>
+        <select id="mobile-sec-sel">
+          ${QUESTIONNAIRE.map((s, i) => {
+            const p = seccionProgreso(s, resp);
+            return `<option value="${i}" ${i === state.seccionIdx ? "selected" : ""}>${esc(s.id)}. ${esc(s.titulo.replace(/^[IVX]+ - /, ""))} (${p.done}/${p.total})</option>`;
+          }).join("")}
+        </select>
+      </div>
+
       <div class="editor-layout">
         <div class="sidebar">
           <h5>Secciones</h5>
@@ -401,6 +411,13 @@ function bindEditor() {
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }));
+  // navegación de secciones (selector móvil)
+  const mobSel = document.getElementById("mobile-sec-sel");
+  if (mobSel) mobSel.onchange = () => {
+    state.seccionIdx = parseInt(mobSel.value);
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   // prev / next
   document.querySelectorAll("[data-nav]").forEach((b) => (b.onclick = () => {
     const dir = b.getAttribute("data-nav");
