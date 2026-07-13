@@ -32,6 +32,10 @@ body {
 button { font-family: inherit; cursor: pointer; }
 a { color: inherit; }
 
+/* Iconos SVG (estilo trazo). Alineados con el texto, sin deformarse. */
+.icon { flex-shrink: 0; vertical-align: -0.15em; }
+.btn .icon, .home-btn .icon, .dropdown-menu button .icon, .save-state .icon { flex-shrink: 0; }
+
 /* ---------- Layout ---------- */
 .topbar {
   background: var(--primary-dark);
@@ -194,7 +198,7 @@ a { color: inherit; }
   font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; color: #fff;
   white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;
 }
-.area-tag::before { content: "👤"; font-size: 10px; }
+.area-tag .icon { width: 12px; height: 12px; }
 
 /* Inputs */
 input[type=text], input[type=number], textarea, select {

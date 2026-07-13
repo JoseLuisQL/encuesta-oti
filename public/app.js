@@ -6,6 +6,26 @@
 const TOTAL_PREGUNTAS = QUESTIONNAIRE.reduce((a, s) => a + s.questions.length, 0);
 const ENTIDAD = "MUNICIPALIDAD DISTRITAL DE ORONCCOY";
 
+// Iconos SVG profesionales (estilo Lucide, trazo). Sin emojis.
+function svg(paths, size) {
+  return `<svg class="icon" width="${size || 16}" height="${size || 16}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+}
+const ICON = {
+  plus: () => svg('<path d="M12 5v14M5 12h14"/>'),
+  arrowLeft: () => svg('<path d="M19 12H5M12 19l-7-7 7-7"/>'),
+  arrowRight: () => svg('<path d="M5 12h14M12 5l7 7-7 7"/>'),
+  download: () => svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>'),
+  check: () => svg('<path d="M20 6L9 17l-5-5"/>', 14),
+  spinner: () => svg('<path d="M21 12a9 9 0 1 1-6.219-8.56"/>', 14),
+  user: () => svg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 12),
+  sheet: () => svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'),
+  fileText: () => svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/>'),
+  users: () => svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'),
+  open: () => svg('<path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>', 14),
+  copy: () => svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>', 14),
+  trash: () => svg('<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>', 14),
+};
+
 const state = {
   view: "lista",       // 'lista' | 'editor'
   registros: [],
@@ -87,8 +107,8 @@ async function doSave() {
 function updateSaveIndicator() {
   const el = document.getElementById("save-state");
   if (!el) return;
-  if (state.saveState === "saving") el.innerHTML = '<span class="spin">⏳</span> Guardando…', el.className = "save-state saving";
-  else if (state.saveState === "saved") el.innerHTML = "✓ Guardado automáticamente", el.className = "save-state saved";
+  if (state.saveState === "saving") el.innerHTML = `<span class="spin">${ICON.spinner()}</span> Guardando…`, el.className = "save-state saving";
+  else if (state.saveState === "saved") el.innerHTML = `${ICON.check()} Guardado automáticamente`, el.className = "save-state saved";
   else el.innerHTML = "", el.className = "save-state";
 }
 
@@ -130,7 +150,7 @@ function topbar() {
         <div class="sub">${esc(ENTIDAD)}</div>
       </div>
       <div class="spacer"></div>
-      ${state.view === "editor" ? `<button class="home-btn" data-action="ir-lista">← Volver a registros</button>` : ""}
+      ${state.view === "editor" ? `<button class="home-btn" data-action="ir-lista">${ICON.arrowLeft()} Volver a registros</button>` : ""}
     </div>`;
 }
 
@@ -143,7 +163,7 @@ function viewLista() {
          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>
          <p style="font-weight:600;color:var(--text)">Aún no tienes registros</p>
          <p>Crea tu primer formulario de apoyo para empezar a recopilar la información.</p>
-         <button class="btn" data-action="nuevo" style="margin-top:14px">+ Crear primer registro</button>
+         <button class="btn" data-action="nuevo" style="margin-top:14px">${ICON.plus()} Crear primer registro</button>
        </div>`;
 
   return `
@@ -159,7 +179,7 @@ function viewLista() {
       </div>
       <div class="section-head">
         <h3>Mis registros</h3>
-        <button class="btn" data-action="nuevo">+ Nuevo registro</button>
+        <button class="btn" data-action="nuevo">${ICON.plus()} Nuevo registro</button>
       </div>
       ${cards}
     </div>`;
@@ -186,9 +206,9 @@ function cardRegistro(r) {
         <div class="progress"><div style="width:${pct}%"></div></div>
       </div>
       <div class="rc-actions" data-stop>
-        <button class="btn sm" data-open="${r.id}">Abrir</button>
-        <button class="btn sm secondary" data-dup="${r.id}">Duplicar</button>
-        <button class="btn sm secondary" data-del="${r.id}">Eliminar</button>
+        <button class="btn sm" data-open="${r.id}">${ICON.open()} Abrir</button>
+        <button class="btn sm secondary" data-dup="${r.id}">${ICON.copy()} Duplicar</button>
+        <button class="btn sm secondary" data-del="${r.id}">${ICON.trash()} Eliminar</button>
       </div>
     </div>`;
 }
@@ -315,7 +335,7 @@ function viewEditor() {
           <option value="Completo" ${r.estado === "Completo" ? "selected" : ""}>Completo</option>
         </select>
         <div class="dropdown" id="export-dd">
-          <button class="btn success" id="export-btn">⬇ Exportar</button>
+          <button class="btn success" id="export-btn">${ICON.download()} Exportar</button>
         </div>
       </div>
 
@@ -340,8 +360,8 @@ function viewEditor() {
           ${emptyFiltro}
           ${preguntas}
           <div class="editor-footer">
-            <button class="btn secondary" data-nav="prev" ${state.seccionIdx === 0 ? "disabled" : ""}>← Sección anterior</button>
-            <button class="btn" data-nav="next" ${state.seccionIdx === QUESTIONNAIRE.length - 1 ? "disabled" : ""}>Siguiente sección →</button>
+            <button class="btn secondary" data-nav="prev" ${state.seccionIdx === 0 ? "disabled" : ""}>${ICON.arrowLeft()} Sección anterior</button>
+            <button class="btn" data-nav="next" ${state.seccionIdx === QUESTIONNAIRE.length - 1 ? "disabled" : ""}>Siguiente sección ${ICON.arrowRight()}</button>
           </div>
         </div>
       </div>
@@ -350,7 +370,7 @@ function viewEditor() {
 
 function areaTag(area) {
   const info = AREAS[area] || { label: area, color: "#64748b" };
-  return `<span class="area-tag" style="background:${info.color}" title="Conviene consultar a: ${esc(info.label)}">${esc(info.label)}</span>`;
+  return `<span class="area-tag" style="background:${info.color}" title="Conviene consultar a: ${esc(info.label)}">${ICON.user()}${esc(info.label)}</span>`;
 }
 
 function renderQuestion(q, val) {
@@ -511,9 +531,9 @@ function bindExport() {
     const menu = document.createElement("div");
     menu.className = "dropdown-menu";
     menu.innerHTML = `
-      <button data-exp="excel">📊 Exportar a Excel (.xlsx)</button>
-      <button data-exp="pdf">📄 Exportar a PDF</button>
-      <button data-exp="pdf-area">📄 PDF por área (para consultar)</button>`;
+      <button data-exp="excel">${ICON.sheet()} Exportar a Excel (.xlsx)</button>
+      <button data-exp="pdf">${ICON.fileText()} Exportar a PDF</button>
+      <button data-exp="pdf-area">${ICON.users()} PDF por área (para consultar)</button>`;
     dd.appendChild(menu);
     menu.querySelector("[data-exp=excel]").onclick = () => { menu.remove(); exportExcel(); };
     menu.querySelector("[data-exp=pdf]").onclick = () => { menu.remove(); exportPDF(false); };
@@ -534,7 +554,7 @@ function valorTexto(q, val) {
         const v = obj[ri + "_" + ci];
         return v ? `${c}: ${v}` : null;
       }).filter(Boolean);
-      if (parts.length) lines.push(`${rw} → ${parts.join(", ")}`);
+      if (parts.length) lines.push(`${rw} — ${parts.join(", ")}`);
     });
     return lines.join("\n");
   }
